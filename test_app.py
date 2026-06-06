@@ -1,5 +1,5 @@
 import unittest
-from app import saludo
+from hola import saludo
 
 class TestHola(unittest.TestCase):
     def test_saludo(self):
