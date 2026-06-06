@@ -1,4 +1,4 @@
-name: Alerta NTFY
+name: CI y Alerta
 
 on:
   push:
@@ -6,13 +6,25 @@ on:
       - main
 
 jobs:
-  notificar:
+  test-y-notificacion:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Enviar notificación a ntfy
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Ejecutar pruebas unitarias
         run: |
-          curl -H "Title: Nuevo Push" \
-               -H "Priority: default" \
-               -d "Se realizó un push al repositorio ${{ github.repository }} por ${{ github.actor }}" \
+          python -m unittest test_hola.py
+
+      - name: Enviar notificación a ntfy
+        if: success()
+        run: |
+          curl -H "Title: Push Exitoso" \
+               -d "Pruebas unitarias completadas correctamente en ${{ github.repository }}" \
                https://ntfy.sh/devops-itla
